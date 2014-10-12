@@ -13,7 +13,6 @@ var session 		= require('express-session');
 
 var mongojs 		= require('mongojs');
 var db				= mongojs('rssque',['feeds']);
-var users			= mongojs('rssque',['users']).users;
 
 
 var routes = require('./routes/index');
