@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "svn",
-    "url": ""
+    "type": "git",
+    "url": "https://alirizadikici@bitbucket.org/alirizadikici/rssque.git"
   },
   "author": "Ali Riza Dikici",
   "license": "Private",
