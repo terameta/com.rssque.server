@@ -17,6 +17,7 @@ var users			= mongojs('rssque',['users']).users;
 
 
 var routes = require('./routes/index');
+require('./config/passport.js')(passport);
 
 var app = express();
 
