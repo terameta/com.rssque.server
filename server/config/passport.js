@@ -1,4 +1,5 @@
 var LocalStrategy 	= require('passport-local').Strategy;
+var mongojs 		= require('mongojs');
 var users			= mongojs('rssque',['users']).users;
 
 module.exports = function(passport){
