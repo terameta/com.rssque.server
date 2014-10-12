@@ -12,22 +12,20 @@
 	<script type="text/javascript" src="/js/controllers.js"></script>
 </head>
  
-<body>
-	<div class="row">
-		<div class="col-sm-9">
-			<h1>rssque</h1>
-		</div>
-		<div class="col-sm-3">
-			<a href="/login" class="btn btn-default btn-sm">Login</a>
-			<a href="/signup" class="btn btn-default btn-sm">Signup</a>
-		</div>
-	</div>	
-	
+<body>	
 	<div class="row">
 		<div class="container">
 			<div class="col-sm-9">
-			<h1>rssque</h1>
+				<h1>rssque</h1>
 			</div>
+			<div class="col-sm-3" style="padding-top:30px;">
+				<a href="/signup" class="btn btn-default btn-sm pull-right">Signup</a>
+				<a href="/login" class="btn btn-default btn-sm pull-right">Login</a> 
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="container">
 			<hr/>
 			<ng-view></ng-view>
 		</div>
