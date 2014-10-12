@@ -51,23 +51,6 @@ module.exports = function(passport){
 							if(userInserted)
 								return done(null, userInserted, req.flash('signupMessage', 'You have succesfully registered'));
 						});
-						
-						
-						//return done(null, true, req.flash('signupMessage', 'You have succesfully registered'));
-						
-						/*var newUser            = new User();
-
-						// set the user's local credentials
-						newUser.local.email    = email;
-						newUser.local.password = newUser.generateHash(password);
-
-						// save the user
-						newUser.save(function(err) {
-							if (err)
-								throw err;
-							return done(null, newUser);
-						});
-						*/
 					}
 				});    
 			});
