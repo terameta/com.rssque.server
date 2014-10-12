@@ -75,7 +75,7 @@ module.exports = function(passport){
 	));
 }
 
-
+/*
 passport.use(new LocalStrategy({
 		usernameField: 'email',
 		passwordField: 'passwd',
@@ -93,4 +93,4 @@ passport.use(new LocalStrategy({
 			return done(null, user);
 		});
 	}
-));
+));*/
