@@ -1,0 +1,26 @@
+<div class="container" ng-controller="rssqueCtrl">
+	<div class="row col-md-12">
+		<div>
+			<input type="text" class="form-control input-lg" placeholder="Enter a Feed Address" ng-keypress="save($event)" ng-model="feedInput">
+		</div>
+	</div>
+	<div class="row col-md-12 feeds">
+		<div class="alert alert-info text-center" ng-hide="feeds.length > 0">
+			<h3>No Feeds yet!</h3>
+		</div>
+		<div ng-repeat="feed in feeds" class="feed col-md-12 col-sm-12 col-xs-12" ng-class="feed.isCompleted ? 'strike' : ''">
+			<div class="col-md-1 col-sm-1 col-xs-1">
+				<input type="checkbox" ng-checked="feed.isCompleted" ng-click="updateStatus($event, feed._id, $index)">
+			</div>
+			<div class="col-md-8 col-sm-8 col-xs-8">
+				<span ng-show="!isEditable[$index]">{{feed.feed}}</span>
+				<input ng-show="isEditable[$index]" type="text" value="{{feed.feed}}" ng-keypress="edit($event,$index);">
+				<input ng-show="isEditable[$index]" type="button" class="btn btn-warning" value="Cancel" ng-click="isEditable[$index] = false" />
+			</div>
+			<div class="col-md-3 col-sm-3 col-xs-3">
+				<input type="button" class="btn btn-info" ng-disabled="feed.isCompleted" class="pull-right" value="Edit" ng-click="isEditable[$index] = true" />
+				<input type="button" class="btn btn-danger" class="pull-right" value="Delete" ng-click="delete($index)" />
+			</div>
+		</div>
+	</div>
+</div>
