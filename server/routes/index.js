@@ -1,10 +1,15 @@
-module.exports = function(app, passport) {
-	var mongojs 	= require('mongojs');
+module.exports = function(app, passport){
+	var mongojs		= require('mongojs');
 	var db			= mongojs('rssque',['feeds']);
 
 	/* GET home page. */
 	app.get('/', function(req, res) {
-		res.render('index');
+		if(req.isAuthenticated()){
+			res.render('index', { isOurUser : 1 });
+		}else{
+			res.render('index', { isOurUser : 0 });
+		}
+		
 	});
 	
 	app.get('/login', function(req, res) {
@@ -90,53 +95,3 @@ function isLoggedIn(req, res, next) {
 	// if they aren't redirect them to the home page
 	res.redirect('/');
 }
-/* this part is the old version
-var express 	= require('express');
-var router 		= express.Router();
-
-var mongojs 	= require('mongojs');
-var db			= mongojs('rssque',['feeds']);
-
-/* GET home page. * /
-router.get('/', function(req, res) {
-	res.render('index');
-});
-
-router.get('/login', function(req, res) {
-	//res.render('login');
-	res.render('login', { message: req.flash('loginMessage') });
-});
-
-router.get('/api/feeds', function(req,res){
-	db.feeds.find(function(err, data){
-		res.json(data);
-	});
-});
-
-router.post('/api/feeds', function(req, res) {
-	db.feeds.insert(req.body, function(err, data) {
-		res.json(data);
-	});
-});
-
-router.put('/api/feeds', function(req, res) {
-	db.feeds.update({
-		_id: mongojs.ObjectId(req.body._id)
-	}, {
-		isCompleted: req.body.isCompleted,
-		feed: req.body.feed
-	}, {}, function(err, data) {
-		res.json(data);
-	});
-});
-
-router.delete('/api/feeds/:_id', function(req, res) {
-	db.feeds.remove({
-		_id: mongojs.ObjectId(req.params._id)
-	}, '', function(err, data) {
-		res.json(data);
-	});
-});
-
-module.exports = router;
-*/

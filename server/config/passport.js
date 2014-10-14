@@ -8,12 +8,10 @@ module.exports = function(passport){
 	});
 
 	passport.deserializeUser(function(id, done) {
-		console.log(id);
 		users.findOne({ _id:mongojs.ObjectId(id) }, function(err, user) {
 			if(err)
 				done(err);
-				
-			console.log(user._id);
+			
 			done(err, user);
 		});
 		/*findById(id, function (err, user) {
@@ -46,7 +44,6 @@ module.exports = function(passport){
 						// if there is no user with that email	
 						// create the user
 						var passHash = generateHash(password);
-						console.log(passHash);
 						users.insert({user: email, pass: passHash }, function(err, userInserted){
 							if(err)
 								return done(err);
