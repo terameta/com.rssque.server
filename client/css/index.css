@@ -1,0 +1,61 @@
+html,body{
+    height:100%;
+}
+
+.centerdiv{
+    height: 100%;
+    display:table;
+    width: 100%;
+    margin-top: -40px;
+    padding-top: 40px;
+    margin-bottom: -30px;
+    padding-bottom: 30px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.topdiv{
+    height: 40px;
+    width: 100%;
+    display:table;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.botdiv{
+    height: 30px;
+    width: 100%;
+    display:table;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.row{
+    height: 100%;
+    display: table-row;
+    text-align: center;
+}
+
+.col-md-8.no-float{
+    float: none; /* thanks baxabbit */
+}
+.col-md-8{
+    display: table-cell;
+    width: 60%;
+}
+
+.np-nextpage{
+    display: table;
+}
+
+.np-left{
+    text-align: right;
+    padding: 50px;
+    padding-bottom: 120px;
+}
+
+.np-right{
+    text-align: left;
+    padding: 50px;
+    padding-bottom: 120px;
+}

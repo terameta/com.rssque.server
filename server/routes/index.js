@@ -12,12 +12,12 @@ module.exports = function(app, passport){
 		
 	});
 	
-	app.get('/login', function(req, res) {
+	app.get('/signin', function(req, res) {
 		//res.render('login');
 		res.render('login', { message: req.flash('loginMessage') });
 	});
 	
-	app.post('/login', passport.authenticate(
+	app.post('/signin', passport.authenticate(
 		'local', 
 			{ 
 				successRedirect: '/profile',
