@@ -11,17 +11,22 @@ module.exports = function(app, passport){
 		}
 		
 	});
+
+	app.get('/reader', isLoggedIn, function(req, res) {
+		res.render('reader', {
+			user : req.user // get the user out of session and pass to template
+		});
+	});
 	
 	app.get('/signin', function(req, res) {
-		//res.render('login');
-		res.render('login', { message: req.flash('loginMessage') });
+		res.render('signin', { message: req.flash('loginMessage') });
 	});
 	
 	app.post('/signin', passport.authenticate(
 		'local', 
 			{ 
 				successRedirect: '/profile',
-				failureRedirect: '/login',
+				failureRedirect: '/signin',
 				failureFlash: true 
 			}
 		)

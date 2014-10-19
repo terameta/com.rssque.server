@@ -1,0 +1,25 @@
+.navbar{
+    min-height: 34px;
+}
+
+.navbar-nav>li>a {
+    padding-top: 8px;
+    padding-bottom: 0px;
+}
+
+.navbar-form {
+    padding: 0;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    margin: 0;
+}
+
+.form-control {
+    line-height: 1;
+    height: 24px !important;
+}
+
+.form-group{
+    padding: 0;
+    margin: 0;
+}
