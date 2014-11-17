@@ -5,7 +5,8 @@ var TwitterStrategy 	= require('passport-twitter').Strategy;
 var GoogleStrategy      = require('passport-google-oauth').OAuth2Strategy;
 
 var mongojs 		    = require('mongojs');
-var users	    		= mongojs('rssque',['users']).users;
+//var users	    		= mongojs('rssque',['users']).users;
+var users	            = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
 
 var configAuth          = require('./auth');
 

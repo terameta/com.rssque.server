@@ -1,46 +1,100 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-	<title>rssque::Signup</title>
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<title>rssque::your reading experience</title>
+	<link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/lib/font-awesome/css/font-awesome.min.css">
-	<style>
-		body 		{ padding-top:80px; }
-	</style>
+	<!--link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"-->
+	<link rel="stylesheet" type="text/css" href="/css/index.css">
+	<script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script>
+	<!--meta name="viewport" content="width=device-width,initial-scale=0.67"-->
 </head>
 <body>
-<div class="container">
-
-<div class="col-sm-6 col-sm-offset-3">
-
-	<h1><span class="fa fa-sign-in"></span> Signup</h1>
-
-	<!-- show any messages that come back with authentication -->
-	<% if (message.length > 0) { %>
-		<div class="alert alert-danger"><%= message %></div>
-	<% } %>
-
-	<!-- LOGIN FORM -->
-	<form action="/signup" method="post">
-		<div class="form-group">
-			<label>Email</label>
-			<input type="text" class="form-control" name="email">
+	<div class="container topdiv">
+		<div class="row">
+			<div class="col-md-8 no-float">
+				<div class="col-md-6" style="text-align: left;">&nbsp;</div>
+				<div class="col-md-6" style="text-align: right;">&nbsp;</div>
+			</div>
 		</div>
-		<div class="form-group">
-			<label>Password</label>
-			<input type="password" class="form-control" name="passwd">
+	</div>
+	<div class="container centerdiv">
+		<div class="row">
+			<div class="col-md-8 no-float">
+				<table height="100%" width="100%"><tr><td align="center">
+					<table border="0">
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+								<img src=img/rssquelogo.svg width="120px" height="120px">
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+						<tr>
+							<td colspan="5" align="center" style="padding: 10px;font-size: 3em">
+								Your reading experience
+							</td>
+						</tr>
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+								<!-- show any messages that come back with authentication -->
+                        		<% if (message.length > 0) { %>
+                        			<div class="alert alert-danger"><%= message %></div>
+                        		<% } %>
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+								<h3>Sign up with</h3>
+
+                                <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+                                <a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
+                                <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google</a>
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+								or
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+								<form action="/signup" method="post">
+								    <h3>E-mail Address</h3>
+                        			<div class="form-group">
+                        				<input type="text" class="form-control" name="email" placeholder="Email">
+                        			</div>
+                        			<div class="form-group">
+                        				<!--label>Password</label-->
+                        				<input type="password" class="form-control" name="passwd" placeholder="Password">
+                        			</div>
+                        	
+                        			<button type="submit" class="btn btn-warning btn-lg">Sign up</button>
+                        		</form>
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="200px">&nbsp;</td>
+							<td colspan="3" align="center" style="padding: 10px;">
+							    <hr />
+								<p>Already have an account? <a href="/signin">Sign in</a> or go <a href="/">home</a>.</p>
+							</td>
+							<td width="200px">&nbsp;</td>
+						</tr>
+					</table>
+				</td> </tr></table>
+			</div>
 		</div>
-
-		<button type="submit" class="btn btn-warning btn-lg">Sign up</button>
-	</form>
-
-	<hr>
-
-	<p>Already have an account? <a href="/signin">Sign in</a></p>
-	<p>Or go <a href="/">home</a>.</p>
-
-</div>
-
-</div>
+	</div>
+	
 </body>
+ 
 </html>

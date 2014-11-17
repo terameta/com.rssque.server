@@ -30,9 +30,10 @@
 
                 <% if (user.user) { %>
                     <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.user %><br>
-                        <strong>password</strong>: <%= user.pass %>
+                        <!--strong>id</strong>: < %= user._id % ><br-->
+                        <strong>Email Address</strong>: <%= user.user %><br>
+                        <br />
+                        <!--strong>password</strong>: < %= user.pass %-->
                     </p>
                     
                     <a href="/unlink/local" class="btn btn-default">Unlink</a>
@@ -51,10 +52,10 @@
                 <!-- check if the user has this token (is the user authenticated with this social account) -->
                 <% if (user.facebook) { %>
                     <p>
-                        <strong>id</strong>: <%= user.facebook.id %><br>
-                        <strong>token</strong>: <%= user.facebook.token %><br>
-                        <strong>email</strong>: <%= user.facebook.email %><br>
-                        <strong>name</strong>: <%= user.facebook.name %><br>
+                        <!--strong>id</strong>: < %= user.facebook.id % ><br-->
+                        <!--strong>token</strong>: < %= user.facebook.token % ><br-->
+                        <strong>Name</strong>: <%= user.facebook.name %><br>
+                        <strong>Email Address</strong>: <%= user.facebook.email %><br>
                     </p>
 
                     <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
@@ -77,10 +78,10 @@
                 <!-- check if the user has this token (is the user authenticated with this social account) -->
                 <% if (user.twitter) { %>
                     <p>
-                        <strong>id</strong>: <%= user.twitter.id %><br>
-                        <strong>token</strong>: <%= user.twitter.token %><br>
-                        <strong>display name</strong>: <%= user.twitter.displayName %><br>
-                        <strong>username</strong>: <%= user.twitter.username %>
+                        <!--strong>id</strong>: < %= user.twitter.id % ><br-->
+                        <!--strong>token</strong>: < %= user.twitter.token % ><br-->
+                        <strong>Name</strong>: <%= user.twitter.displayName %><br>
+                        <strong>Username</strong>: <%= user.twitter.username %>
                     </p>
 
                     <a href="/unlink/twitter" class="btn btn-info">Unlink</a>
@@ -99,10 +100,10 @@
                 <!-- check if the user has this token (is the user authenticated with this social account) -->
                 <% if (user.google) { %>
                     <p>
-                        <strong>id</strong>: <%= user.google.id %><br>
-                        <strong>token</strong>: <%= user.google.token %><br>
-                        <strong>email</strong>: <%= user.google.email %><br>
-                        <strong>name</strong>: <%= user.google.name %>
+                        <!--strong>id</strong>: < %= user.google.id % ><br-->
+                        <!--strong>token</strong>: < %= user.google.token % ><br-->
+                        <strong>Name</strong>: <%= user.google.name %><br>
+                        <strong>Email Address</strong>: <%= user.google.email %>
                     </p>
 
                     <a href="/unlink/google" class="btn btn-danger">Unlink</a>

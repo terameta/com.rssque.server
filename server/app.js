@@ -12,7 +12,8 @@ var bodyParser		= require('body-parser');
 var session 		= require('express-session');
 
 var mongojs 		= require('mongojs');
-var db				= mongojs('rssque',['feeds']);
+//var db				= mongojs('rssque',['feeds']);
+var db	            = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
 
 
 var routes = require('./routes/index');

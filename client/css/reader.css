@@ -1,25 +1,80 @@
-.navbar{
-    min-height: 34px;
+body, div{
+    padding:0;
+    margin:0;
 }
 
-.navbar-nav>li>a {
-    padding-top: 8px;
-    padding-bottom: 0px;
+#header{
+    margin:0;
+    padding:0;
+    height:44px;
+    display:block;
+    box-sizing: border-box;
+    background-color: #1D2025;
 }
 
-.navbar-form {
-    padding: 0;
-    padding-top: 5px;
-    padding-bottom: 0px;
-    margin: 0;
+#logo{
+    box-sizing: border-box;
+    padding:5px 10px 5px 10px;
+    width:200px;
+    background-color: #2A2D34;
+    display: inline-block;
+    height: 44px;
+    float: left;
 }
 
-.form-control {
-    line-height: 1;
-    height: 24px !important;
+.logo-text{
+    text-decoration: none !important;
+    font-size: 24px;
+    font-family: 'Fjalla One', sans-serif;
+    color: #bb5810;
+    display: inline-block;
+    height:44px;
+    line-height:44px;
+    margin-top: -5px;
+    padding-left: 10px;
+    position: absolute;
 }
 
-.form-group{
-    padding: 0;
-    margin: 0;
+.menu-item{
+    display: inline-block;
+    color: #fff;
+    height:44px;
+    line-height:44px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-family: 'Fjalla One', sans-serif;
+    position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
+    float: left;
+    border-right: 1px #7E7F84 solid;
+}
+
+.menu-item>a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.menu-item-first{
+    border-left: 1px #7E7F84 solid;
+}
+
+.menu-separator{
+    display: inline-block;
+    color: #fff;
+    height:44px;
+    line-height:44px;
+    text-decoration: none !important;
+    font-size: 18px;
+    font-family: 'Fjalla One', sans-serif;
+    position: absolute;
+    margin: 5px;
+    width: 1px;
+    height: 34px;
+    background-color: #7E7F84;
+}
+
+.pull-right{
+    float: right;
+    position: relative !important;
 }

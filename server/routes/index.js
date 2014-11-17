@@ -1,7 +1,7 @@
 module.exports = function(app, passport){
 	var mongojs		= require('mongojs');
-	var db			= mongojs('rssque',['feeds']);
-	var users	    = mongojs('rssque',['users']).users;
+	var db			= mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
+	var users	    = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
 
 	/* GET home page. */
 	app.get('/', function(req, res) {
@@ -26,7 +26,7 @@ module.exports = function(app, passport){
 	app.post('/signin', passport.authenticate(
 		'local', 
 			{ 
-				successRedirect: '/profile',
+				successRedirect: '/reader',
 				failureRedirect: '/signin',
 				failureFlash: true 
 			}
@@ -42,7 +42,7 @@ module.exports = function(app, passport){
 	app.post('/signup', passport.authenticate(
 		'local-signup', 
 			{
-				successRedirect : '/profile', // redirect to the secure profile section
+				successRedirect : '/reader', // redirect to the secure reader section
 				failureRedirect : '/signup', // redirect back to the signup page if there is an error
 				failureFlash : true // allow flash messages
 			}
@@ -65,7 +65,7 @@ module.exports = function(app, passport){
     // route for facebook authentication and login
     app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
     // handle the callback after facebook has authenticated the user
-    app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect : '/profile', failureRedirect : '/' }));
+    app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect : '/reader', failureRedirect : '/' }));
     // send to facebook to do the authentication
     app.get('/connect/facebook', passport.authorize('facebook', { scope : 'email' }));
     // handle the callback after facebook has authorized the user
@@ -77,7 +77,7 @@ module.exports = function(app, passport){
     // route for twitter authentication and login
     app.get('/auth/twitter', passport.authenticate('twitter'));
     
-    app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedirect : '/profile', failureRedirect : '/' }));
+    app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedirect : '/reader', failureRedirect : '/' }));
     // send to twitter to do the authentication
     app.get('/connect/twitter', passport.authorize('twitter', { scope : 'email' }));
     // handle the callback after twitter has authorized the user
@@ -92,7 +92,7 @@ module.exports = function(app, passport){
     app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
     // the callback after google has authenticated the user
-    app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/profile', failureRedirect : '/' }));
+    app.get('/auth/google/callback', passport.authenticate('google', { successRedirect : '/reader', failureRedirect : '/' }));
     // send to google to do the authentication
     app.get('/connect/google', passport.authorize('google', { scope : ['profile', 'email'] }));
 
@@ -176,11 +176,74 @@ module.exports = function(app, passport){
 	});
 	
 	app.get('/api/feeds', function(req,res){
-		db.feeds.find(function(err, data){
+	    /* here is the old version, might be needed
+	    var selector = {};
+	    selector[req.user._id] = 1;
+		users.find(selector,{items:0},function(err, data){
 			res.json(data);
 		});
+		*/
+		users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds:1},function(err, data){
+		    //console.log(data.userfeeds);
+		    var foundFeeds = [];
+		    data.userfeeds.forEach(function(foundFeed){
+		        console.log(foundFeed);
+		        foundFeeds.push(foundFeed.feed);
+		    }
+		    );
+			res.json(data.userfeeds);
+		});
 	});
-
+	
+	app.get('/api/feed/getItems', function(req,res){
+	    console.log(req.body.feedID);
+	    console.log(req.body);
+	    res.send("0");
+		/*
+		users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds:1},function(err, data){
+		    //console.log(data.userfeeds);
+		    var foundFeeds = [];
+		    data.userfeeds.forEach(function(foundFeed){
+		        console.log(foundFeed);
+		        foundFeeds.push(foundFeed.feed);
+		    }
+		    );
+			res.json(data.userfeeds);
+		});
+		*/
+	});
+	
+	app.get('/api/user/getCurFeed', function(req,res){
+	    var selector = {};
+	    selector['_id'] = req.user._id;
+		users.find(selector,function(err, data){
+		    if(err){
+		        res.send('error');
+		    } else {
+		        if(data[0]){
+		            res.send(data[0].curFeed);
+		        } else {
+		            res.send("0");
+		        }
+		    }
+		});
+	});
+	
+	app.put('/api/user/setCurFeed', function(req, res){
+	   users.update(
+	       { _id: req.user._id },
+	       { $set: { curFeed: req.body.feedID } },
+            function(err, userUpdated){
+                if(err){
+                    res.json('error: \'couldn\'t set current feed\'');
+                } else {
+                    res.json('feedID:'+req.body.feedID);
+                }
+            }
+	   );
+	});
+	
+	/*
 	app.post('/api/feeds', function(req, res) {
 		db.feeds.insert(req.body, function(err, data) {
 			res.json(data);
@@ -205,6 +268,7 @@ module.exports = function(app, passport){
 			res.json(data);
 		});
 	});
+	*/
 };
 
 function isLoggedIn(req, res, next) {
