@@ -176,41 +176,45 @@ module.exports = function(app, passport){
 	});
 	
 	app.get('/api/feeds', function(req,res){
-	    /* here is the old version, might be needed
-	    var selector = {};
-	    selector[req.user._id] = 1;
-		users.find(selector,{items:0},function(err, data){
-			res.json(data);
-		});
-		*/
 		users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds:1},function(err, data){
-		    //console.log(data.userfeeds);
-		    var foundFeeds = [];
-		    data.userfeeds.forEach(function(foundFeed){
-		        console.log(foundFeed);
-		        foundFeeds.push(foundFeed.feed);
-		    }
-		    );
-			res.json(data.userfeeds);
+            if(err){
+                console.log("Error");
+                res.json([]);
+            } else {
+                res.json(data.userfeeds);
+            }
 		});
 	});
 	
-	app.get('/api/feed/getItems', function(req,res){
-	    console.log(req.body.feedID);
-	    console.log(req.body);
-	    res.send("0");
-		/*
-		users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds:1},function(err, data){
-		    //console.log(data.userfeeds);
-		    var foundFeeds = [];
-		    data.userfeeds.forEach(function(foundFeed){
-		        console.log(foundFeed);
-		        foundFeeds.push(foundFeed.feed);
-		    }
-		    );
-			res.json(data.userfeeds);
-		});
-		*/
+	app.get('/api/feed/getItems/:feedid', function(req,res){
+	    db.feeds.findOne({_id: mongojs.ObjectId(req.params.feedid)}, function(err,data){
+	        if(err){
+	            res.send('error');
+	        } else {
+	            if(data.item){
+	                res.send(data.item);
+	            } else {
+	                var foundItems = [];
+	                res.send(foundItems);
+	            }
+	            
+	        }
+	    });
+	});
+	
+	app.get('/api/feed/getTitle/:feedid', function(req,res){
+	    db.feeds.findOne({_id: mongojs.ObjectId(req.params.feedid)}, function(err,data){
+	        if(err){
+	            res.send('error');
+	        } else {
+	            if(data.title){
+	                res.set({'content-type': 'application/json; charset=utf-8'}).send(data.title);
+	            } else {
+	                res.send('No Feed Title');
+	            }
+	            
+	        }
+	    });
 	});
 	
 	app.get('/api/user/getCurFeed', function(req,res){
@@ -241,6 +245,71 @@ module.exports = function(app, passport){
                 }
             }
 	   );
+	});
+	
+	app.put('/api/user/itemChangeState', function(req, res){
+	    console.log(req.body.feed);
+	    console.log(req.user._id);
+	    console.log(req.body.item);
+	    console.log(req.body.state);
+	    
+        if(req.body.state === 'read'){
+            users.update(
+                {
+                    _id: req.user._id,
+                    "userfeeds": {
+                        $elemMatch: {
+                            "feed": mongojs.ObjectId(req.body.feed)
+                        }
+                    }
+                    
+                }, 
+                        { $addToSet: { "userfeeds.$.readitems" : req.body.item } 
+                },
+                function(err, userUpdated){
+                    if(err){
+                        res.json("Failed to mark read");
+                    } else {
+                        res.json("Marked read");
+                    }
+                }
+            );
+        } else if(req.body.state === 'unread'){
+            users.update(
+                {
+                    _id: req.user._id,
+                    "userfeeds": {
+                        $elemMatch: {
+                            "feed": mongojs.ObjectId(req.body.feed)
+                        }
+                    }
+                    
+                }, 
+                        { $pull: { "userfeeds.$.readitems" : req.body.item } 
+                },
+                function(err, userUpdated){
+                    if(err){
+                        res.json("Failed to mark unread");
+                    } else {
+                        res.json("Marked unread");
+                    }
+                }
+            );
+        } else {
+            res.send("State is not defined well");
+        }
+
+	   /*users.update(
+	       { _id: req.user._id },
+	       { $set: { curFeed: req.body.feedID } },
+            function(err, userUpdated){
+                if(err){
+                    res.json('error: \'couldn\'t set current feed\'');
+                } else {
+                    res.json('feedID:'+req.body.feedID);
+                }
+            }
+	   );*/
 	});
 	
 	/*

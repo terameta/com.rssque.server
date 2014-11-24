@@ -7,9 +7,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>rssque::your feed reading experience</title>
+	<title>rssque::your reading experience</title>
 	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=device-width, minimal-ui">
 
 	<!--link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css"-->
 	<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
@@ -19,7 +19,6 @@
 	<script src="/lib/jquery/dist/jquery.min.js"></script>
 	<script src="/lib/angular/angular.min.js"></script>
 	<script src="/js/reader.js"></script>
-
 </head>
 
 <body ng-controller="mainController">
@@ -30,9 +29,9 @@
                 <div class="logo-text"><b>rssque</b></div>
     		</a>
         </div>
-        <a href=/addfeed><div class="menu-item menu-item-first"><i class="fa fa-plus"></i> Add Feed</div></a>
+        <a href=/addfeed><div class="menu-item menu-item-first"><i class="fa fa-plus"></i> Add</div></a>
         <div class="menu-item">
-            <select ng-model="curFeed" ng-change="change()" ng-options="feed.feed for feed in feeds track by feed.feed">
+            <select ng-model="curFeed" ng-change="change()" ng-options="feed.title for feed in feeds track by feed.feed" style="width:120px;">
                 <option value="">Choose Feed</option>
             </select>
         </div>
@@ -40,9 +39,47 @@
         <a href="/profile"><div class="menu-item pull-right"><i class="fa fa-user"></i></div></a>
         <a href="/settings"><div class="menu-item pull-right menu-item-first"><i class="fa fa-cogs"></i></div></a>
     </div>
-    <div>
-        myBody
-        {{ curFeed }}
+    <div id="main">
+        <div ng-repeat="item in curFeedItems" class="feed-item-container">
+            <table width="100%" class="feed-item-shower">
+                <tr>
+                    <td class="feed-item-left-handle"></td>
+                    <td class="feed-item-center-handle">
+                        <div class="feed-item-header-unread" id="feed-item-header-{{item.linkhash}}">
+                            <table width="100%">
+                                <tr ng-click="toggleFeedItem(item)">
+                                    <td width="*" ng-bind-html="item.title | urldecode | to_trusted"></td><td width="100px">{{item.date | date:'dd-MMM-yyyy'}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="feed-item-content-hidden" id="feed-item-content-{{item.linkhash}}">
+                            <table>
+                                <tr><td><a class="feed-item-title-link" href={{item.link}} target=_blank ng-bind-html="item.title | urldecode | to_trusted"></a></td></tr>
+                                <tr><td ng-bind-html="item.content | to_trusted"></td></tr>
+                            </table>
+                        </div>
+                        <div class="feed-item-footer-hidden" id="feed-item-footer-{{item.linkhash}}">
+                            <table width="100%">
+                                <tr>
+                                    <td width="*">Burası da altı</td>
+                                    <td width="100px">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" name="itemisreadswitch-{{item.linkhash}}" class="onoffswitch-checkbox" id="itemisreadswitch-{{item.linkhash}}" ng-change='itemchangestate(item)' ng-model="item.isread" ng-true-value="unread" ng-false-value="read">
+                                            <label class="onoffswitch-label" for="itemisreadswitch-{{item.linkhash}}">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        
     </div>
 		
       		<!--div class="col-md-9">
