@@ -1,9 +1,9 @@
 /* http://scotch.io/tutorials/javascript/creating-a-single-page-todo-app-with-node-and-angular */
 
-var reader = angular.module('reader', []);
+var reader = angular.module('reader', ['ngRoute']);
 reader.filter('urlencode', function() {
     //return window.encodeURIComponent;
-    return urlencode;co
+    return urlencode;
 });
 
 reader.filter('urldecode', function() {
@@ -16,21 +16,41 @@ reader.filter('to_trusted', ['$sce', function($sce){
             return $sce.trustAsHtml(text);
         };
     }]);
+    
+reader.config(['$routeProvider',
+	function($routeProvider) {
+		$routeProvider
+		.when('/', {
+			templateUrl: '/partials/reader.html'
+			//,controller: 'readerController'
+		})
+		.when('/addfeed', {
+			templateUrl: '/partials/addfeed.html'
+			//,controller: 'readerController'
+		})
+		.otherwise({
+			redirectTo: '/'
+		});
+}]);
 
 function mainController($scope, $http){
-    $scope.formData = {};
-    
-    $http.get('/api/feeds')
-        .success(function(data){
-            $scope.feeds = data;
-            angular.forEach($scope.feeds, function(feedToGetTitle) {
-            	$http.get('/api/feed/getTitle/'+feedToGetTitle.feed)
-            		.success(function(data){
-	                    feedToGetTitle.title = urldecode(data);
-	                })
-	                .error(function(data){
-	                    console.log('Error: ' + data);
-	                });
+	$scope.formData = {};
+	$scope.isAddingFeed = false;
+	
+	$http.get('/api/feeds')
+		.success(function(data){
+			$scope.feeds = data;
+			angular.forEach($scope.feeds, function(feedToGetTitle) {
+				//console.log(feedToGetTitle.title);
+				if(!feedToGetTitle.title){
+					$http.get('/api/feed/getTitle/'+feedToGetTitle.feed)
+						.success(function(data){
+							feedToGetTitle.title = urldecode(data);
+						})
+						.error(function(data){
+							console.log('Error: ' + data);
+						});
+				}
 			});
             //Once we have the list of user's feeds, we can set the last feed the user was reading
             $http.get('/api/user/getCurFeed')
@@ -57,33 +77,67 @@ function mainController($scope, $http){
     };
     
     $scope.$watch( 'curFeed', function(newCurFeed, oldCurFeed){
-		//console.log('curFeed Changed');
-		
-        if(newCurFeed){
-        	var params = { feedID: $scope.curFeed.feed };
-        	var config = { params: params};
-        	
-	        $http.put('/api/user/setCurFeed', params)
-	            .success(function(data){
-	                //console.log('Current Feed is set.');
-	            })
-	            .error(function(data){
-	                console.log('Error: ' + data);
-	            });
+        //console.log('curFeed Changed');
         
-	        $http.get('/api/feed/getItems/'+$scope.curFeed.feed)
-	            .success(function(data){
-	                $scope.curFeedItems = data;
-	            })
-	            .error(function(data){
-	                console.log('Error: ' + data);
-	            });
+        if(newCurFeed){
+            var params = { feedID: $scope.curFeed.feed };
+            var config = { params: params};
+            
+            $http.put('/api/user/setCurFeed', params)
+                .success(function(data){
+                    //console.log('Current Feed is set.');
+                })
+                .error(function(data){
+                    console.log('Error: ' + data);
+                });
+                
+            $http.get('/api/feed/getItems/'+$scope.curFeed.feed)
+                .success(function(data){
+                    $scope.curFeedItems = data;
+                    
+					$http.get('/api/user/getReadItems/'+$scope.curFeed.feed)
+					    .success(function(data){
+					        if(data){
+					            if(data.userfeeds){
+					                if(data.userfeeds[0]){
+					                    if(data.userfeeds[0].readitems){
+					                        data.userfeeds[0].readitems.forEach(function(curReadItem){
+					                            $scope.curFeedItems.forEach(function(curFeedItem){
+					                            	if(curFeedItem.linkhash === curReadItem){
+					                            		curFeedItem.wasread = true;
+					                            	}
+					                            });
+					                        });
+					                    }
+					                }
+					            }
+					        }
+					    })
+					    .error(function(data){
+					        console.log('Error: ' + data);
+					    });
+                })
+                .error(function(data){
+                    console.log('Error: ' + data);
+                });
         }
-	});
+    });
 	
 	$scope.toggleFeedItem = function(toggledItem){
 		id = toggledItem.linkhash;
 		link = toggledItem.link;
+		
+		//console.log(toggledItem);
+		if(!toggledItem.content || toggledItem.content == 'Item content is not available.'){
+			$http.get('/api/item/'+id)
+				.success(function(data){
+					toggledItem.content = data;
+	            })
+	            .error(function(data){
+	            	toggledItem.content = 'Item content is not available.';
+	            });
+		}
+		
 		if( $("#feed-item-content-"+id).hasClass("feed-item-content-hidden") ){
 	        $(".feed-item-content-visible").removeClass('feed-item-content-visible').addClass('feed-item-content-hidden');
 	        $("#feed-item-content-"+id).removeClass('feed-item-content-hidden').addClass('feed-item-content-visible');

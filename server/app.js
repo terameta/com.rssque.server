@@ -12,7 +12,9 @@ var bcrypt   		= require('bcrypt-nodejs');
 var logger			= require('morgan');
 var cookieParser	= require('cookie-parser');
 var bodyParser		= require('body-parser');
+
 var session 		= require('express-session');
+var MongoStore      = require('connect-mongo')(session);
 
 var mongojs 		= require('mongojs');
 //var db				= mongojs('rssque',['feeds']);
@@ -52,7 +54,21 @@ var app = express();
     app.use(cookieParser());
     
     //required for passport
-    app.use(session({ secret: '***REMOVED***'}));
+    //app.use(session({ secret: '***REMOVED***'}));
+    app.use(
+        session({
+            cookie: { maxAge: 1000*60*60*24*60 } ,
+            secret: "***REMOVED***" ,
+            store:new MongoStore({
+                db: 'rssque',
+                host: '***REMOVED***',
+                port: 3932,  
+                username: 'rssque',
+                password: '***REMOVED***', 
+                collection: 'session', 
+                auto_reconnect:true
+        })
+    }));
     
     generateHash = function(password){
     	return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

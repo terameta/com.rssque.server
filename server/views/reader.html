@@ -14,10 +14,11 @@
 	<!--link rel="stylesheet" type="text/css" href="/lib/bootstrap/dist/css/bootstrap.min.css"-->
 	<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="/lib/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="css/reader.css">
+	<link rel="stylesheet" href="/css/reader.css">
 	
 	<script src="/lib/jquery/dist/jquery.min.js"></script>
 	<script src="/lib/angular/angular.min.js"></script>
+	<script src="/lib/angular-route/angular-route.min.js"></script>
 	<script src="/js/reader.js"></script>
 </head>
 
@@ -25,11 +26,11 @@
     <div id="header">
         <div id="logo">
             <a href="/reader">
-                <span><img src=img/rssquelogo.svg width="34px" height="34px"></span>
+                <span><img src="/img/rssquelogo.svg" width="34px" height="34px"></span>
                 <div class="logo-text"><b>rssque</b></div>
     		</a>
         </div>
-        <a href=/addfeed><div class="menu-item menu-item-first"><i class="fa fa-plus"></i> Add</div></a>
+        <a href="#/addfeed"><div class="menu-item menu-item-first"><i class="fa fa-plus"></i> Add</div></a>
         <div class="menu-item">
             <select ng-model="curFeed" ng-change="change()" ng-options="feed.title for feed in feeds track by feed.feed" style="width:120px;">
                 <option value="">Choose Feed</option>
@@ -40,55 +41,7 @@
         <a href="/settings"><div class="menu-item pull-right menu-item-first"><i class="fa fa-cogs"></i></div></a>
     </div>
     <div id="main">
-        <div ng-repeat="item in curFeedItems" class="feed-item-container">
-            <table width="100%" class="feed-item-shower">
-                <tr>
-                    <td class="feed-item-left-handle"></td>
-                    <td class="feed-item-center-handle">
-                        <div class="feed-item-header-unread" id="feed-item-header-{{item.linkhash}}">
-                            <table width="100%">
-                                <tr ng-click="toggleFeedItem(item)">
-                                    <td width="*" ng-bind-html="item.title | urldecode | to_trusted"></td><td width="100px">{{item.date | date:'dd-MMM-yyyy'}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="feed-item-content-hidden" id="feed-item-content-{{item.linkhash}}">
-                            <table>
-                                <tr><td><a class="feed-item-title-link" href={{item.link}} target=_blank ng-bind-html="item.title | urldecode | to_trusted"></a></td></tr>
-                                <tr><td ng-bind-html="item.content | to_trusted"></td></tr>
-                            </table>
-                        </div>
-                        <div class="feed-item-footer-hidden" id="feed-item-footer-{{item.linkhash}}">
-                            <table width="100%">
-                                <tr>
-                                    <td width="*">Burası da altı</td>
-                                    <td width="100px">
-                                        <div class="onoffswitch">
-                                            <input type="checkbox" name="itemisreadswitch-{{item.linkhash}}" class="onoffswitch-checkbox" id="itemisreadswitch-{{item.linkhash}}" ng-change='itemchangestate(item)' ng-model="item.isread" ng-true-value="unread" ng-false-value="read">
-                                            <label class="onoffswitch-label" for="itemisreadswitch-{{item.linkhash}}">
-                                                <span class="onoffswitch-inner"></span>
-                                                <span class="onoffswitch-switch"></span>
-                                            </label>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        
-        
+        <div ng-view></div>
     </div>
-		
-      		<!--div class="col-md-9">
-      		    <div class="container">
-            	    <div class="jumbotron text-center jumbotron-bright">
-                        <h1>Hede <span class="label label-info">{{ feeds.length }}</span></h1>
-                    </div>
-            	</div>
-      		</div--> 
-  	
 </body>
 </html>

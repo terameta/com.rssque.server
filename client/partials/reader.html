@@ -1,0 +1,38 @@
+        <div ng-repeat="item in curFeedItems | orderBy:'date':true" class="feed-item-container" ng-hide="item.wasread">
+            <table width="100%" class="feed-item-shower">
+                <tr>
+                    <td class="feed-item-left-handle"></td>
+                    <td class="feed-item-center-handle">
+                        <div class="feed-item-header-unread" id="feed-item-header-{{item.linkhash}}">
+                            <table width="100%">
+                                <tr ng-click="toggleFeedItem(item)">
+                                    <td width="*" ng-bind-html="item.title + ':' + item.isread | to_trusted"></td><td width="100px">{{item.date | date:'dd-MMM-yyyy'}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="feed-item-content-hidden" id="feed-item-content-{{item.linkhash}}">
+                            <table>
+                                <tr><td><a class="feed-item-title-link" href={{item.link}} target=_blank ng-bind-html="item.title | to_trusted"></a></td></tr>
+                                <tr><td ng-bind-html="item.content | to_trusted"></td></tr>
+                            </table>
+                        </div>
+                        <div class="feed-item-footer-hidden" id="feed-item-footer-{{item.linkhash}}">
+                            <table width="100%">
+                                <tr>
+                                    <td width="*">&nbsp;</td>
+                                    <td width="100px">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" name="itemisreadswitch-{{item.linkhash}}" class="onoffswitch-checkbox" id="itemisreadswitch-{{item.linkhash}}" ng-change='itemchangestate(item)' ng-model="item.isread" ng-true-value="unread" ng-false-value="read">
+                                            <label class="onoffswitch-label" for="itemisreadswitch-{{item.linkhash}}">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>

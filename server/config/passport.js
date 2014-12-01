@@ -69,7 +69,7 @@ module.exports = function(passport){
                                 return done(err);
                             }
                             if(userUpdated){
-                                return done(null, user, req.flash('signupMessage','You have succesfully connected your facebook account.'));
+                                return done(null, user, req.flash('signupMessage','You have succesfully connected your local account.'));
                             }
                         }
                     );
