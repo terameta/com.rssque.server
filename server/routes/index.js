@@ -3,6 +3,7 @@ module.exports = function(app, passport){
 	var db			= mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
 	var users	    = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
 	var items       = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['items']).items;
+	var read        = require('node-readability');
 
 	/* GET home page. */
 	app.get('/', function(req, res) {
@@ -204,23 +205,76 @@ module.exports = function(app, passport){
     });
     
     app.get('/api/user/getReadItems/:feedid', function(req,res){
-        console.log(req.user._id);
-        users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds: { $elemMatch: {feed: mongojs.ObjectId(req.params.feedid)}}}, function(err,data){
+        var foundItems = [];
+        if(req){
+            if(req.user){
+                if(req.user._id){
+                    users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds: { $elemMatch: {feed: mongojs.ObjectId(req.params.feedid)}}}, function(err,data){
+                        if(err){
+                            res.send('error');
+                        } else {
+                            if(data){
+                                res.send(data);
+                            } else {
+                                var foundItems = [];
+                                res.send(foundItems);
+                            }
+                        }
+                    });
+                } else {
+                    res.send(foundItems);
+                }
+            } else {
+                res.send(foundItems);
+            }
+        } else {
+            res.send(foundItems);
+        }
+    });
+	
+    app.get('/api/item/:feedid/:itemid', function(req,res){
+        db.feeds.findOne({_id: mongojs.ObjectId(req.params.feedid)},{items: { $elemMatch: {linkhash: req.params.itemid}}}, function(err,data){
             if(err){
                 res.send('error');
             } else {
                 if(data){
-                    res.send(data);
+                    if(data.items){
+                        if(data.items[0]){
+                            if(data.items[0].link){
+                                console.log(data.items[0].link);
+                                read(data.items[0].link, function(err, article, meta) {
+                                    // Main Article
+                                    //console.log(article.content);
+                                    res.send(article.content);
+                                    // Title
+                                    //console.log(article.title);
+                                    
+                                    // HTML Source Code
+                                    //console.log(article.html);
+                                    // DOM
+                                    //console.log(article.document);
+                                    
+                                    // Response Object from Request Lib
+                                    //console.log(meta);
+                                    
+                                    // Close article to clean up jsdom and prevent leaks
+                                    article.close();
+                                });
+                            } else {
+                                res.send('');
+                            }
+                        } else {
+                            res.send('');
+                        }
+                    } else {
+                        res.send('');
+                    }
                 } else {
-                    var foundItems = [];
-                    res.send(foundItems);
+                    res.send('');
                 }
             }
         });
-    });
-	
-    app.get('/api/item/:itemid', function(req,res){
-        items.findOne({linkhash: req.params.itemid}, function(err,data){
+        /*items.findOne({linkhash: req.params.itemid}, function(err,data){
             if(err){
                 res.send('error');
             } else {
@@ -235,6 +289,7 @@ module.exports = function(app, passport){
                 }
             }
         });
+        */
     });
 	
     app.get('/api/feed/getTitle/:feedid', function(req,res){

@@ -1,26 +1,17 @@
-<div class="container" ng-controller="rssqueCtrl">
-	<div class="row col-md-12">
-		<div>
-			<input type="text" class="form-control input-lg" placeholder="Enter a Feed Address" ng-keypress="save($event)" ng-model="feedInput">
-		</div>
-	</div>
-	<div class="row col-md-12 feeds">
-		<div class="alert alert-info text-center" ng-hide="feeds.length > 0">
-			<h3>No Feeds yet!</h3>
-		</div>
-		<div ng-repeat="feed in feeds" class="feed col-md-12 col-sm-12 col-xs-12" ng-class="feed.isCompleted ? 'strike' : ''">
-			<div class="col-md-1 col-sm-1 col-xs-1">
-				<input type="checkbox" ng-checked="feed.isCompleted" ng-click="updateStatus($event, feed._id, $index)">
-			</div>
-			<div class="col-md-8 col-sm-8 col-xs-8">
-				<span ng-show="!isEditable[$index]">{{feed.feed}}</span>
-				<input ng-show="isEditable[$index]" type="text" value="{{feed.feed}}" ng-keypress="edit($event,$index);">
-				<input ng-show="isEditable[$index]" type="button" class="btn btn-warning" value="Cancel" ng-click="isEditable[$index] = false" />
-			</div>
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<input type="button" class="btn btn-info" ng-disabled="feed.isCompleted" class="pull-right" value="Edit" ng-click="isEditable[$index] = true" />
-				<input type="button" class="btn btn-danger" class="pull-right" value="Delete" ng-click="delete($index)" />
-			</div>
-		</div>
-	</div>
+<div ng-controller="addfeedController">
+    <form name="addFeedForm" novalidate>
+        <div>
+            <input type="url" name="addFeedFormUrl" placeholder="Enter a Feed Address" ng-model="feedInput" required>
+            <br>{{feedInput}}
+            <br>addFeedForm.addFeedFormUrl.$dirty: {{addFeedForm.addFeedFormUrl.$dirty}}
+            <br>addFeedForm.addFeedFormUrl.$invalid: {{addFeedForm.addFeedFormUrl.$invalid}}
+            <br>addFeedForm.addFeedFormUrl.$error: {{addFeedForm.addFeedFormUrl.$error}}
+            <br><input type="button" value="Parse" />
+            <div ng-show="addFeedForm.addFeedFormUrl.$dirty && addFeedForm.addFeedFormUrl.$invalid">Invalid:
+                <span ng-show="addFeedForm.addFeedFormUrl.$error.required">Please provide a URL.</span>
+                <span ng-show="addFeedForm.addFeedFormUrl.$error.url">This is not a valid URL.</span>
+            </div>
+    	</div>
+    </form>
+	
 </div>

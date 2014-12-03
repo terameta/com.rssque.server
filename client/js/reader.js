@@ -1,6 +1,6 @@
 /* http://scotch.io/tutorials/javascript/creating-a-single-page-todo-app-with-node-and-angular */
 
-var reader = angular.module('reader', ['ngRoute']);
+var reader = angular.module('reader', ['ngRoute', 'readerControllers']);
 reader.filter('urlencode', function() {
     //return window.encodeURIComponent;
     return urlencode;
@@ -22,20 +22,23 @@ reader.config(['$routeProvider',
 		$routeProvider
 		.when('/', {
 			templateUrl: '/partials/reader.html'
-			//,controller: 'readerController'
+			//,controller: 'mainController'
 		})
 		.when('/addfeed', {
 			templateUrl: '/partials/addfeed.html'
-			//,controller: 'readerController'
+			//,controller: 'addfeedController'
 		})
 		.otherwise({
 			redirectTo: '/'
 		});
 }]);
 
-function mainController($scope, $http){
+var readerControllers = angular.module('readerControllers', []);
+
+readerControllers.controller('mainController', ['$scope', '$http', function ($scope, $http){
 	$scope.formData = {};
 	$scope.isAddingFeed = false;
+	$scope.itemDisplayModeShowAll = false;
 	
 	$http.get('/api/feeds')
 		.success(function(data){
@@ -129,12 +132,20 @@ function mainController($scope, $http){
 		
 		//console.log(toggledItem);
 		if(!toggledItem.content || toggledItem.content == 'Item content is not available.'){
-			$http.get('/api/item/'+id)
+			$http.get('/api/item/'+$scope.curFeed.feed+'/'+id)
 				.success(function(data){
 					toggledItem.content = data;
+					$('#main').scrollTop(0).scrollTop($('#feed-item-header-'+id).offset().top-48);
+					console.log("setting tags");
+					$("#feed-item-content-"+id).find('a').attr('target', "_blank");
+					$(toggledItem.content).find('a').attr('target', "_blank");
+					console.log($("#feed-item-content-"+id).text());
+					console.log(id);
+					console.log("done setting tags");
 	            })
 	            .error(function(data){
 	            	toggledItem.content = 'Item content is not available.';
+	            	$('#main').scrollTop(0).scrollTop($('#feed-item-header-'+id).offset().top-48);
 	            });
 		}
 		
@@ -180,7 +191,7 @@ function mainController($scope, $http){
                 //console.log('Error: ' + data);
             });
 	};
-}
+}]);
 
 function urldecode(str) {
 	return decodeURIComponent((str + '').replace(/%(?![\da-f]{2})/gi, function() {

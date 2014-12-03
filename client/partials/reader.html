@@ -1,4 +1,4 @@
-        <div ng-repeat="item in curFeedItems | orderBy:'date':true" class="feed-item-container" ng-hide="item.wasread">
+        <div ng-repeat="item in curFeedItems | orderBy:'date':true" class="feed-item-container" ng-hide="item.wasread && !itemDisplayModeShowAll">
             <table width="100%" class="feed-item-shower">
                 <tr>
                     <td class="feed-item-left-handle"></td>
@@ -6,7 +6,7 @@
                         <div class="feed-item-header-unread" id="feed-item-header-{{item.linkhash}}">
                             <table width="100%">
                                 <tr ng-click="toggleFeedItem(item)">
-                                    <td width="*" ng-bind-html="item.title + ':' + item.isread | to_trusted"></td><td width="100px">{{item.date | date:'dd-MMM-yyyy'}}</td>
+                                    <td width="*" ng-bind-html="item.title | to_trusted"></td><td width="100px">{{item.date | date:'dd-MMM-yyyy'}}</td>
                                 </tr>
                             </table>
                         </div>

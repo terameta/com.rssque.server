@@ -24,11 +24,20 @@ a{
     box-sizing: border-box;
     background-color: #1D2025;
 }
-
+/* before removing rssque name from the logo
 #logo{
     box-sizing: border-box;
     padding:5px 10px 5px 10px;
     width:128px;
+    background-color: #2A2D34;
+    display: inline-block;
+    height: 44px;
+    float: left;
+}*/
+
+#logo{
+    box-sizing: border-box;
+    padding:5px 10px 5px 10px;
     background-color: #2A2D34;
     display: inline-block;
     height: 44px;
