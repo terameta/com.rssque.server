@@ -1,15 +1,25 @@
 <div ng-controller="addfeedController">
     <form name="addFeedForm" novalidate>
         <div>
-            <input type="url" name="addFeedFormUrl" placeholder="Enter a Feed Address" ng-model="feedInput" required>
-            <br>{{feedInput}}
-            <br>addFeedForm.addFeedFormUrl.$dirty: {{addFeedForm.addFeedFormUrl.$dirty}}
-            <br>addFeedForm.addFeedFormUrl.$invalid: {{addFeedForm.addFeedFormUrl.$invalid}}
-            <br>addFeedForm.addFeedFormUrl.$error: {{addFeedForm.addFeedFormUrl.$error}}
-            <br><input type="button" value="Parse" />
-            <div ng-show="addFeedForm.addFeedFormUrl.$dirty && addFeedForm.addFeedFormUrl.$invalid">Invalid:
-                <span ng-show="addFeedForm.addFeedFormUrl.$error.required">Please provide a URL.</span>
-                <span ng-show="addFeedForm.addFeedFormUrl.$error.url">This is not a valid URL.</span>
+            <input type="url" name="addFeedFormUrl" placeholder="Enter a Feed Address" ng-model="addFeedURL" required>
+            <input type="button" value="Parse" ng-click="parseFeedURL();" ng-disabled="!addFeedURL" />
+            <input type="button" value="Cancel" ng-click="cancelParseFeedURL();" ng-disabled="addFeedURLAction" />
+            <span ng-hide="addFeedURL"> &nbsp;&nbsp;Please enter a valid URL, e.g. http://www.site.com/rss.xml</span>
+            
+            <br /><br />
+            <div ng-hide="!curParsedItems">
+                <b>Feed is now parsed. Below you can kindly see the items:</b>
+            </div>
+            <div ng-repeat="item in curParsedItems | orderBy:'date':true" class="feed-item-container" ng-hide="!curParsedItems">
+                <table>
+                    <tr>
+                        <td valign="top"><b>Title:</b></td><td ng-bind-html="item.title | to_trusted"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top"><b>Summary:</b></td><td ng-bind-html="item.summary | to_trusted"></td>
+                    </tr>
+                </table>
+                <hr />
             </div>
     	</div>
     </form>

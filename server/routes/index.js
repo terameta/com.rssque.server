@@ -4,6 +4,8 @@ module.exports = function(app, passport){
 	var users	    = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
 	var items       = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['items']).items;
 	var read        = require('node-readability');
+	var feedParser 	= require('feedparser');
+	var feedRequest	= require('request');
 
 	/* GET home page. */
 	app.get('/', function(req, res) {
@@ -298,7 +300,7 @@ module.exports = function(app, passport){
             if(err){
                 res.send('error');
             } else {
-                if(data.title){
+                if(data.title && req.user){
                     users.update(
                         {
                             _id: mongojs.ObjectId(req.user._id),
@@ -424,6 +426,81 @@ module.exports = function(app, passport){
 	   );*/
 	});
 	
+	app.post('/api/addfeed/parse', function(req, res) {
+		var posts = [];
+		var isNoError = true;
+		//console.log(req.body.url);
+		var addFeedParseReq = feedRequest(req.body.url, {timeout: 20000, pool:false});
+		addFeedParseReq.setMaxListeners(50);
+		addFeedParseReq.setHeader('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36');
+		addFeedParseReq.setHeader('accept', 'text/html,application/xhtml+xml');
+		
+		var addFeedParseParser = new feedParser();
+		
+		addFeedParseReq.on('error', done);
+		
+		addFeedParseReq.on('response', function(addFeedParseRes) {
+			if (addFeedParseRes.statusCode != 200) return this.emit('error', new Error('Bad status code'));
+			var charset = getParams(addFeedParseRes.headers['content-type'] || '').charset;
+			addFeedParseRes = maybeTranslate(addFeedParseRes, charset);
+			// And boom goes the dynamite
+			addFeedParseRes.pipe(addFeedParseParser);
+		});
+		
+		addFeedParseParser.on('error', function(){
+			isNoError = false;
+			res.send('Error fetching the url');
+		});
+		addFeedParseParser.on('end', function(){
+			if(isNoError){
+				res.json(posts);
+			}
+		});
+		addFeedParseParser.on('readable', function() {
+			var post;
+			while (post = this.read()) {
+			//	console.log(post);
+				posts.push(post);
+			}
+			
+		});
+		
+		//res.send('We are parsing the feed');
+	});
+	
+	app.post('/api/addfeed/assigntouser', function(req, res) {
+		db.feeds.findOne({url: req.body.url}, function(err,data){
+			if(err){
+				res.send('error');
+			} else {
+				if(data){
+					users.update(
+						{
+							_id: req.user._id
+						}, 
+						{
+							$addToSet: { "userfeeds" : {"feed" : data._id, title: req.body.title} } 
+						},
+						function(err, userUpdated){
+							if(err){
+								res.send("Failed to add feed to user");
+							} else {
+								res.send(data._id);
+							}
+						}
+					);
+				} else {
+					db.feeds.insert({url:req.body.url, title: req.body.title}, function(err, data) {
+						if(err){
+							res.send("Failed to create the feed");
+						} else {
+							res.send("Feed is created, re-run the assignment");
+						}
+					});
+            	}
+            }
+        });
+	});
 	/*
 	app.post('/api/feeds', function(req, res) {
 		db.feeds.insert(req.body, function(err, data) {
@@ -451,6 +528,41 @@ module.exports = function(app, passport){
 	});
 	*/
 };
+
+function done(err) {
+	if (err) {
+		console.log(err, err.stack);
+	}
+}
+
+function getParams(str) {
+	var params = str.split(';').reduce(function (params, param) {
+		var parts = param.split('=').map(function (part) { return part.trim(); });
+		if (parts.length === 2) {
+			params[parts[0]] = parts[1];
+		}
+		return params;
+	}, {});
+	return params;
+}
+
+function maybeTranslate (res, charset) {
+	var iconv;
+	// Use iconv if its not utf8 already.
+	if (!iconv && charset && !/utf-*8/i.test(charset)) {
+		try {
+			iconv = new Iconv(charset, 'utf-8');
+			console.log('Converting from charset %s to utf-8', charset);
+			iconv.on('error', done);
+			// If we're using iconv, stream will be the output of iconv
+			// otherwise it will remain the output of request
+			res = res.pipe(iconv);
+		} catch(err) {
+			res.emit('error', err);
+		}
+	}
+	return res;
+}
 
 function isLoggedIn(req, res, next) {
 
