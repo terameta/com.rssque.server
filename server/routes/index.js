@@ -180,6 +180,7 @@ module.exports = function(app, passport){
 	});
 	
 	app.get('/api/feeds', function(req,res){
+	    //console.log(req.user._id);
 		users.findOne({_id: mongojs.ObjectId(req.user._id)},{userfeeds:1},function(err, data){
             if(err){
                 console.log("Error");
@@ -190,14 +191,13 @@ module.exports = function(app, passport){
 		});
 	});
 	
-    app.get('/api/feed/getItems/:feedid', function(req,res){
-        db.feeds.findOne({_id: mongojs.ObjectId(req.params.feedid)}, function(err,data){
+    app.get('/api/feed/getItems/:feedid/:skip', function(req,res){
+        items.find({feed: mongojs.ObjectId(req.params.feedid)}, {content:0}).sort({date:-1, _id:1}).skip(parseInt(req.params.skip)).limit(50, function(err,data){
             if(err){
                 res.send('error');
             } else {
-                if(data.items){
-                    //console.log(data.items);
-                    res.send(data.items);
+                if(data){
+                    res.send(data);
                 } else {
                     var foundItems = [];
                     res.send(foundItems);
@@ -235,39 +235,71 @@ module.exports = function(app, passport){
     });
 	
     app.get('/api/item/:feedid/:itemid', function(req,res){
-        db.feeds.findOne({_id: mongojs.ObjectId(req.params.feedid)},{items: { $elemMatch: {linkhash: req.params.itemid}}}, function(err,data){
+        items.findOne({feed: mongojs.ObjectId(req.params.feedid), linkhash: req.params.itemid}, function(err,data){
             if(err){
                 res.send('error');
             } else {
                 if(data){
-                    if(data.items){
-                        if(data.items[0]){
-                            if(data.items[0].link){
-                                console.log(data.items[0].link);
-                                read(data.items[0].link, function(err, article, meta) {
-                                    // Main Article
-                                    //console.log(article.content);
-                                    res.send(article.content);
-                                    // Title
-                                    //console.log(article.title);
-                                    
-                                    // HTML Source Code
-                                    //console.log(article.html);
-                                    // DOM
-                                    //console.log(article.document);
-                                    
-                                    // Response Object from Request Lib
-                                    //console.log(meta);
-                                    
-                                    // Close article to clean up jsdom and prevent leaks
-                                    article.close();
-                                });
-                            } else {
-                                res.send('');
-                            }
-                        } else {
-                            res.send('');
-                        }
+                    if(data.link){
+                        read(
+                        	data.link, 
+                        	{
+                        		preprocess: function(source, response, content_type, callback) {
+                        			//console.log(content_type);
+                        			//console.log(content_type.mimeType);
+                        			if(content_type.mimeType != 'text/html'){
+                        				return callback(new Error('wrong content type'));
+                        			}
+                        			//console.log(source.length);
+                        			if (source.length > 10240000) {
+                        				return callback(new Error('too big'));
+                        			}
+                        			
+                        			callback(null, source);
+                        	}},
+                        	function(err, article, meta) {
+                        		if(err){
+                        			//console.log(err);
+                        			
+                        			items.findOne({linkhash: req.params.itemid}, function(err,data){
+							            if(err){
+							                res.send('error');
+							            } else {
+							                if(data){
+							                    if(data.content){
+							                        res.send(data.content);
+							                    } else {
+							                        res.send("Item content is not available.");
+							                    }
+							                } else {
+							                    res.send("Item content is not available.");
+							                }
+							            }
+							        });
+                        			
+                        		} else {
+                        			res.send(article.content);
+                        			article.close();
+                        		}
+                        		
+                            	// Main Article
+                            	//console.log(article.content);
+                            	//res.send(article.content);
+                            	// Title
+                            	//console.log(article.title);
+                            
+                            	// HTML Source Code
+                            	//console.log(article.html);
+                            	// DOM
+                            	//console.log(article.document);
+                            
+                            	// Response Object from Request Lib
+                            	//console.log(meta);
+                            
+                            	// Close article to clean up jsdom and prevent leaks
+                            	//article.close();
+                        	}
+                        );
                     } else {
                         res.send('');
                     }
@@ -276,22 +308,6 @@ module.exports = function(app, passport){
                 }
             }
         });
-        /*items.findOne({linkhash: req.params.itemid}, function(err,data){
-            if(err){
-                res.send('error');
-            } else {
-                if(data){
-                    if(data.content){
-                        res.send(data.content);
-                    } else {
-                        res.send("Item content is not available.");
-                    }
-                } else {
-                    res.send("Item content is not available.");
-                }
-            }
-        });
-        */
     });
 	
     app.get('/api/feed/getTitle/:feedid', function(req,res){

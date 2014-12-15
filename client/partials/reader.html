@@ -1,3 +1,4 @@
+     <div infinite-scroll='bringnextPage()' infinite-scroll-disabled='isbringnextPageBusy' infinite-scroll-immediate-check='true' infinite-scroll-distance="1">
         <div ng-repeat="item in curFeedItems | orderBy:'date':true" class="feed-item-container" ng-hide="item.wasread && !itemDisplayModeShowAll">
             <table width="100%" class="feed-item-shower">
                 <tr>
@@ -11,9 +12,9 @@
                             </table>
                         </div>
                         <div class="feed-item-content-hidden" id="feed-item-content-{{item.linkhash}}">
-                            <table>
+                            <table width="100%">
                                 <tr><td><a class="feed-item-title-link" href={{item.link}} target=_blank ng-bind-html="item.title | to_trusted"></a></td></tr>
-                                <tr><td ng-bind-html="item.content | to_trusted"></td></tr>
+                                <tr width="100%"><td ng-bind-html="item.content | to_trusted" id="feed-item-content-inner-{{item.linkhash}}"></td></tr>
                             </table>
                         </div>
                         <div class="feed-item-footer-hidden" id="feed-item-footer-{{item.linkhash}}">
@@ -36,3 +37,14 @@
                 </tr>
             </table>
         </div>
+        <div class="feed-item-container" ng-hide="noMoreItems">
+            <table width="100%" class="feed-item-shower">
+                <tr>
+                    <td class="feed-item-left-handle"></td>
+                    <td class="feed-item-center-handle">
+                        Loading more items, please wait...
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>

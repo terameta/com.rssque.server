@@ -1,5 +1,4 @@
 readerControllers.controller('addfeedController', ['$scope', '$http', function ($scope, $http){
-    $scope.addFeedURL = 'http://www.earthday.org/rss.xml';
     $scope.cancelParseFeedURL = function(){
         $scope.changeRoute('/reader');
     };
