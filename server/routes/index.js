@@ -3,7 +3,7 @@ module.exports = function(app, passport){
 	var db			= mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
 	var users	    = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
 	var items       = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['items']).items;
-	var read        = require('node-readability');
+	var read        = require('read-art');
 	var feedParser 	= require('feedparser');
 	var feedRequest	= require('request');
 
@@ -242,6 +242,34 @@ module.exports = function(app, passport){
                 if(data){
                     if(data.link){
                         read(
+                            data.link,
+                            {
+                                agent: true
+                            },
+                            function(err, article, options){
+                                if(err){
+                                    items.findOne({linkhash: req.params.itemid}, function(err,data){
+							            if(err){
+							                res.send('error');
+							            } else {
+							                if(data){
+							                    if(data.content){
+							                        res.send(data.content);
+							                    } else {
+							                        res.send("Item content is not available.");
+							                    }
+							                } else {
+							                    res.send("Item content is not available.");
+							                }
+							            }
+							        });
+                                } else {
+                                    res.send(article.content);
+                                }
+                            }
+                        );
+                        /*
+                        read(
                         	data.link, 
                         	{
                         		preprocess: function(source, response, content_type, callback) {
@@ -299,7 +327,7 @@ module.exports = function(app, passport){
                             	// Close article to clean up jsdom and prevent leaks
                             	//article.close();
                         	}
-                        );
+                        );*/
                     } else {
                         res.send('');
                     }
