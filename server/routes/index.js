@@ -1,8 +1,8 @@
 module.exports = function(app, passport){
 	var mongojs		= require('mongojs');
-	var db			= mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
-	var users	    = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['users']).users;
-	var items       = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['items']).items;
+	var db			= mongojs('***REMOVED***',['feeds']);
+	var users	    = mongojs('***REMOVED***',['users']).users;
+	var items       = mongojs('***REMOVED***',['items']).items;
 	var read        = require('read-art');
 	var feedParser 	= require('feedparser');
 	var feedRequest	= require('request');
