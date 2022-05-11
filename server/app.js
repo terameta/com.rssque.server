@@ -18,7 +18,7 @@ var MongoStore      = require('connect-mongo')(session);
 
 var mongojs 		= require('mongojs');
 //var db				= mongojs('rssque',['feeds']);
-var db	            = mongojs('rssque:***REMOVED***@***REMOVED***:3932/rssque',['feeds']);
+var db	            = mongojs('***REMOVED***',['feeds']);
 
 
 var routes = require('./routes/index');
@@ -60,10 +60,10 @@ var app = express();
             cookie: { maxAge: 1000*60*60*24*60 } ,
             secret: "***REMOVED***" ,
             store:new MongoStore({
-                db: 'rssque',
+                db: '***REMOVED***',
                 host: '***REMOVED***',
                 port: 3932,  
-                username: 'rssque',
+                username: '***REMOVED***',
                 password: '***REMOVED***', 
                 collection: 'session', 
                 auto_reconnect:true
